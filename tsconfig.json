@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "typeRoots": [ "./node_modules/@types" ],
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "es2015"
+    ],
+    "outDir": "build"
+  },
+
+  "include": [
+    "server/**/*.ts"
+  ]
+}

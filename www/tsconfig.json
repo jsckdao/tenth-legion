@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "jsxFactory": "_c",
+    "typeRoots": [ "../node_modules/@types" ],
+    "types": [
+      "node",
+      "corejs"
+    ],
+    "lib": [
+      "dom",
+      "es2015"
+    ]
+  }
+}
