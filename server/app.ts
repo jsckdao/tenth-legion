@@ -1,28 +1,17 @@
-import * as express from 'express';
-import { join } from 'path';
-import * as fs from 'fs';
+import { expressApp  } from './commons/MVC';
+import { configure as dbConfigure } from './commons/DataBase';
+import { configure as cacheConfigure } from './commons/Cache';
+import './controllers';
 
-let test = 'this is test';
 
-let app = express();
+let app = expressApp
 
-const webBase = join(__dirname, 'public');
 
-app.use('/', express.static(webBase));
 
-app.get('*', (req, res) => {
-  fs.exists(join(webBase, 'index.html'), (exists) => {
-    if (exists) {
-      let out = fs.createReadStream(join(webBase, 'index.html'));
-      out.pipe(res);
-    }
-    else {
-      res.status(404);
-      res.end('404');
-    }
-  });
-});
 
+let cfg = require('../config.json');
+dbConfigure(cfg.dev.dataBase);
+cacheConfigure(cfg.dev.cache);
 
 app.listen(8972);
 
