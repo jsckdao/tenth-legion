@@ -5,14 +5,13 @@ import { parse as parseUrl } from 'url';
 import { join } from 'path';
 import { json } from 'body-parser';
 import * as fs from 'fs';
+import { User } from './Models';
 
 export const expressApp = express();
 
-export interface OnlineUser {
+export interface OnlineUser extends User {
 
-  token?: string;
-
-  username?: string;
+  token: string;
 
 }
 
@@ -22,6 +21,10 @@ export interface OnlineUser {
 export class ApiRequestContext {
 
   private _dbSession: DBSession;
+
+  private _token: string;
+
+  private _currentUser: OnlineUser;
 
   /**
    * 在线用户缓存
@@ -38,11 +41,31 @@ export class ApiRequestContext {
     return this._dbSession;
   }
 
+  /**
+   * 数据库会话是否被开启
+   */
   get hasOpenDBSession() {
     return !!this._dbSession;
   }
 
-  constructor(public readonly params: any) { }
+  /**
+   * 当前访问的用户
+   */
+  get currentUser(): Promise<OnlineUser> {
+    if (!this._token) {
+      return Promise.resolve(null);
+    }
+
+    if (this._currentUser) {
+      return Promise.resolve(this._currentUser);
+    }
+
+    return this.userCache.get(this._token).then(user => this._currentUser = user);
+  }
+
+  constructor(public readonly params: any) {
+    this._token = params.token;
+  }
 }
 
 export class LogicError extends Error {
@@ -137,16 +160,15 @@ const webBase = join(__dirname, '../public');
 expressApp.use('/', express.static(webBase));
 expressApp.use('/api', json());
 
-
-expressApp.get('*', (req, res) => {
-  fs.exists(join(webBase, 'index.html'), (exists) => {
-    if (exists) {
-      let out = fs.createReadStream(join(webBase, 'index.html'));
-      out.pipe(res);
-    }
-    else {
-      res.status(404);
-      res.end('404');
-    }
-  });
-});
+// expressApp.get('*', (req, res) => {
+//   fs.exists(join(webBase, 'index.html'), (exists) => {
+//     if (exists) {
+//       let out = fs.createReadStream(join(webBase, 'index.html'));
+//       out.pipe(res);
+//     }
+//     else {
+//       res.status(404);
+//       res.end('404');
+//     }
+//   });
+// });

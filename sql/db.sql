@@ -3,15 +3,18 @@ create database tenth_legion;
 
 use tenth_legion;
 
+drop table if exists `user`;
 create table `user`  (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `username` varchar(30) not null,
+  `name` varchar(20) not null,
   `password` varchar(50),
   `role` varchar(10),
-  `privileges` JSON,
-  `disabled` int
+  `privileges` varchar(255),
+  `disabled` tinyint(1) default 0
 ) ENGINE=InnoDB;
 
+drop table if exists `project`;
 create table `project`  (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(30) not null,
@@ -23,11 +26,11 @@ create table `project`  (
   `dev_url`  varchar(255),
   `pre_url`  varchar(255),
   `online_url`  varchar(255),
-  `status`   int,
+  `status`   int  default 1,
   `description` text
 ) ENGINE=InnoDB;
 
-
+drop table if exists `task`;
 create table `task` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `project_id` int not null,
@@ -40,15 +43,17 @@ create table `task` (
   `assign_user_id`  int,
   `status` int default 0,
   `level`  int,
-  `tags` JSON,
+  `tags` varchar(255),
   `description` text
 ) ENGINE=InnoDB;
 
+drop table if exists `task_tag`;
 create table `task_tag` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `title`  varchar(30) not null
 );
 
+drop table if exists `task_comment`;
 create table `task_comment` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `task_id`  int not null,
@@ -58,6 +63,20 @@ create table `task_comment` (
   `content` text not null
 ) ENGINE=InnoDB;
 
+
+drop table if exists `log`;
+create table `log` (
+  `user_id` int not null,
+  `user_name` varchar(20),
+  `created_time` int not null,
+  `action` varchar(20) not null,
+  `info` text,
+  primary key (`created_time`, `user_id`)
+ ) ENGINE=InnoDB;
+
+drop view if exists `project`;
+create view `project`
+as select
 
 
 

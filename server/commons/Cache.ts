@@ -58,6 +58,19 @@ export class Cache<T> {
       });
     });
   }
+
+  remove(... name: string[]) {
+    return new Promise<void>((resolve, reject) => {
+      client.hdel(this.cacheName, name, (err) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve();
+        }
+      })
+    });
+  }
 }
 
 
