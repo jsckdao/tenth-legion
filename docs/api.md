@@ -79,6 +79,23 @@ DELETE   /api/user/{id}
 ```
 参数: 分页参数
 
+### 用户登录
+```
+POST  /api/login
+```
+参数: 
+```js
+{
+  "username": "cake110",     // 用户名
+  "password": "a123123123"   // 密码
+}
+```
+
+### 用户登出
+```
+POST   /api/logout
+```
+参数: 无
 
 ### 添加项目
 ``` 
