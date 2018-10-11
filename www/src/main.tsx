@@ -31,6 +31,21 @@ const Window = ({ children }) => {
   return createPortal(window, document.getElementById('root'));
 }
 
+// function putUser (){
+//     let xmlhttp=new XMLHttpRequest();
+//     let url = "/api/user";
+// url = addURLParam(url, "name", "Nicholas");
+// url = addURLParam(url, "book", "Professional JavaScript");
+//     xmlhttp.open('POST','/api/user')
+// }
+
+function login (){
+  let xmlhttp=new XMLHttpRequest();
+  let url = "/api/user";
+  url = addURLParam(url, "username", "cake110");
+  url = addURLParam(url, "password", "a123123");
+  xmlhttp.open('POST','/api/login')
+}
 
 function Index() {
   return <div></div>
@@ -61,6 +76,8 @@ function PersonsTable() {
 
     <div className='fl'>
       <button>添加</button>
+      <input placeholder='username' id='username'></input>
+      <input placeholder='password' id='password'></input>
     </div>
     <div className="fr">
       <ul className="pagination">
