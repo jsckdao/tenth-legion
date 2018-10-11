@@ -157,7 +157,7 @@ export function DELETE(path: string, handle: (context: ApiRequestContext) => Pro
 
 const webBase = join(__dirname, '../public');
 
-expressApp.use('/', express.static(webBase));
+// expressApp.use('/', express.static(webBase));
 expressApp.use('/api', json());
 
 // expressApp.get('*', (req, res) => {
