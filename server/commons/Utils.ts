@@ -1,4 +1,5 @@
 import { PageCondition } from "./DataBase";
+import { resolve } from "dns";
 
 
 function safeParseJSON(str) {
@@ -16,4 +17,8 @@ export function getPageFromParams(params: any) : PageCondition {
   page.condition = safeParseJSON(params.condition);
   page.fields = safeParseJSON(params.fields);
   return page;
+}
+
+export function waitLater(seconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, seconds));
 }

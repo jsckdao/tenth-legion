@@ -7,6 +7,8 @@ export interface User {
   name?: string;
   username?: string;
   password?: string;
+  skype?: string;
+  email?: string;
   role?: string;
   privileges?: string[];
   disabled?: boolean;
@@ -27,7 +29,9 @@ export interface Project {
   id?: number;
   name?: string;
   develop_user_id?: number;
+  develop_user_name?: number;
   test_user_id?: number;
+  test_user_name?: number;
   start_time?: number;
   end_time?: number;
   repository_url?: string;
@@ -40,4 +44,8 @@ export interface Project {
    */
   status?: number;
   description?: string;
+}
+
+export interface Task {
+
 }

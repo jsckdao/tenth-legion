@@ -49,7 +49,9 @@ POST  /api/user
 {
   "name": "test",    // 显示名称, 必填
   "username": "test",   // 用户名, 必填
-  "password": "password"  // 密码, 必填
+  "password": "password",  // 密码, 必填
+  "skype": ""   // skype
+  "email": ""
 }
 ```
 
@@ -63,7 +65,9 @@ POST  /api/user/{id}
 {
   "name": "test",    // 显示名称, 选填
   "username": "test",   // 用户名, 选填
-  "password": "password"  // 密码, 选填
+  "password": "password",  // 密码, 选填
+  "skype": ""   // skype
+  "email": ""
 }
 ```
 
@@ -79,6 +83,23 @@ DELETE   /api/user/{id}
 ```
 参数: 分页参数
 
+### 用户登录
+```
+POST  /api/login
+```
+参数: 
+```js
+{
+  "username": "cake110",     // 用户名
+  "password": "a123123123"   // 密码
+}
+```
+
+### 用户登出
+```
+POST   /api/logout
+```
+参数: 无
 
 ### 添加项目
 ``` 
@@ -133,3 +154,4 @@ GET    /api/projects
 ``` 
 参数:  分页参数
 
+### 

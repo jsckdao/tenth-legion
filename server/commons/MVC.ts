@@ -79,10 +79,18 @@ export class LogicError extends Error {
  * @param context
  * @param handle
  */
-async function runInSafe(paramsData: any, handle: (ApiRequestContext) => Promise<any>) {
+async function runInSafe(paramsData: any, options: HandleOptions, handle: (ApiRequestContext) => Promise<any>) {
   let context: ApiRequestContext;
   try {
     context = new ApiRequestContext(paramsData);
+
+    // 检查登录状态
+    if (options.mustLogin) {
+      if ((await context.currentUser) == null) {
+        throw new LogicError('必须先登录');
+      }
+    }
+
     let res = await handle(context);
 
     // 如果发现开启了数据库事务, 提交当前事务
@@ -106,18 +114,17 @@ async function runInSafe(paramsData: any, handle: (ApiRequestContext) => Promise
   }
 }
 
-function register(method: string, path: string, handle: (context: ApiRequestContext) => Promise<any>) {
+function register(method: string, path: string, options: HandleOptions, handle: (context: ApiRequestContext) => Promise<any>) {
   expressApp.route('/api' + path)[method]((req: express.Request, res: express.Response) => {
     let { params, query, body } = req;
     let paramsData = {};
     try {
       let U = parseUrl(req.url, true);
       paramsData = Object.assign(body, params, U.query);
-      console.log('params', paramsData);
     }
     catch(e) {}
 
-    runInSafe(paramsData, handle).then((result) => {
+    runInSafe(paramsData, options, handle).then((result) => {
       res.status(200);
       res.json(result);
     }).catch(err => {
@@ -134,23 +141,31 @@ function register(method: string, path: string, handle: (context: ApiRequestCont
   });
 }
 
-export function GET(path: string, handle: (context: ApiRequestContext) => Promise<any>) {
-  register('get', path, handle);
+export interface HandleOptions {
+  mustLogin?: boolean;
+}
+
+export const defaultOption: HandleOptions = {
+  mustLogin: true
+};
+
+export function GET(path: string, options: HandleOptions,  handle: (context: ApiRequestContext) => Promise<any>) {
+  register('get', path, options, handle);
   return handle;
 }
 
-export function POST(path: string, handle: (context: ApiRequestContext) => Promise<any>) {
-  register('post', path, handle);
+export function POST(path: string, options: HandleOptions, handle: (context: ApiRequestContext) => Promise<any>) {
+  register('post', path, options, handle);
   return handle;
 }
 
-export function PUT(path: string, handle: (context: ApiRequestContext) => Promise<any>) {
-  register('put', path, handle);
+export function PUT(path: string, options: HandleOptions, handle: (context: ApiRequestContext) => Promise<any>) {
+  register('put', path, options, handle);
   return handle;
 }
 
-export function DELETE(path: string, handle: (context: ApiRequestContext) => Promise<any>) {
-  register('delete', path, handle);
+export function DELETE(path: string, options: HandleOptions, handle: (context: ApiRequestContext) => Promise<any>) {
+  register('delete', path, options, handle);
   return handle;
 }
 

@@ -13,6 +13,21 @@
     }
   },
 
+  "test": {
+    "dataBase": {
+      "host": "database.local",
+      "port": 3306,
+      "user": "root",
+      "password": "a123456",
+      "database": "tenth_legion_test",
+      "showSql": true
+    },
+    "cache": {
+      "host": "127.0.0.1",
+      "connect_timeout": 6000
+    }
+  },
+
   "prod": {
 
   }

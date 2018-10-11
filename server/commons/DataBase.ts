@@ -1,6 +1,7 @@
 import { createConnection, ConnectionConfig, Connection } from 'mysql';
 import { compact } from 'underscore';
-import { rejects } from 'assert';
+import * as fs from 'fs';
+import * as Path from 'path';
 
 export type DBData = string | number;
 
@@ -118,7 +119,7 @@ export class DBSession {
    */
   findOne(table: string, where: Condition) {
     let { whereSql, whereValues } = createConditionSql(where);
-    return this.exec(`select * from ${table} where ${whereSql}`, whereValues).then((res) => {
+    return this.exec(`select * from ${table} where ${whereSql} limit 0,1`, whereValues).then((res) => {
       if (res.length > 0) return res[0];
       else return null;
     })
@@ -175,7 +176,7 @@ export class DBSession {
    * @param sql
    * @param values
    */
-  exec(sql: string, values: DBData[]) {
+  exec(sql: string, values?: DBData[]) {
     if (cfg.showSql) {
       console.debug(sql);
     }
@@ -257,4 +258,32 @@ function createConditionSql(where: Condition): { whereSql: string, whereValues: 
 
 export function openSession() {
   return new DBSession(createConnection(cfg));
+}
+
+/**
+ * 重置整个数据库,  危险, 仅供测试使用
+ */
+export async function resetDataBase(cfg) :Promise<void> {
+  let session = new DBSession(createConnection(cfg));
+  let sqls = await readSqlFile();
+  await session.beginTransaction();
+  for (let sql of sqls) {
+    sql = sql.replace(/\s+/g, ' ');
+    await session.exec(sql);
+    // console.log(sql);
+  }
+
+  await session.commit();
+  await session.close();
+}
+
+
+function readSqlFile(): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    fs.readFile(Path.join(__dirname, '../../sql/db.sql'), 'utf8', (err, content) => {
+      if (err) return reject(err);
+      let sqls = content.split(';');
+      resolve(sqls.filter(sql => sql && !/^\s+$/.test(sql)));
+    });
+  });
 }

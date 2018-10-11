@@ -1,14 +1,11 @@
-drop database tenth_legion;
-create database tenth_legion;
-
-use tenth_legion;
-
 drop table if exists `user`;
 create table `user`  (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `username` varchar(30) not null,
-  `name` varchar(20) not null,
+  `name` varchar(100) not null,
   `password` varchar(50),
+  `email` varchar(200),
+  `skype` varchar(100),
   `role` varchar(10),
   `privileges` varchar(255),
   `disabled` tinyint(1) default 0
@@ -68,15 +65,20 @@ drop table if exists `log`;
 create table `log` (
   `user_id` int not null,
   `user_name` varchar(20),
-  `created_time` int not null,
+  `created_time` bigint not null,
   `action` varchar(20) not null,
   `info` text,
   primary key (`created_time`, `user_id`)
  ) ENGINE=InnoDB;
 
-drop view if exists `project`;
-create view `project`
-as select
+
+insert into `user` (`username`,`password`,`name`) value ('admin', '2a5af3af891c42b336f76e95cde41d37', '管理员');
+
+-- drop view if exists `project`;
+-- create view `project`
+-- as select
+
+
 
 
 
