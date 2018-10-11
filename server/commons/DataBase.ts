@@ -2,6 +2,7 @@ import { createConnection, ConnectionConfig, Connection } from 'mysql';
 import { compact } from 'underscore';
 import * as fs from 'fs';
 import * as Path from 'path';
+import { resolve } from 'url';
 
 export type DBData = string | number;
 
@@ -117,7 +118,8 @@ export class DBSession {
    * @param table
    * @param where
    */
-  findOne(table: string, where: Condition) {
+  async findOne(table: string, where: Condition) {
+    await this.beginTransaction();
     let { whereSql, whereValues } = createConditionSql(where);
     return this.exec(`select * from ${table} where ${whereSql} limit 0,1`, whereValues).then((res) => {
       if (res.length > 0) return res[0];
@@ -178,7 +180,7 @@ export class DBSession {
    */
   exec(sql: string, values?: DBData[]) {
     if (cfg.showSql) {
-      console.debug(sql);
+      console.log(sql);
     }
     return new Promise<any>((resolve, reject) => this.connection.query(sql, values, (err, result) => {
       if (err) {
@@ -256,8 +258,9 @@ function createConditionSql(where: Condition): { whereSql: string, whereValues: 
   return { whereSql: sql, whereValues: values };
 }
 
-export function openSession() {
-  return new DBSession(createConnection(cfg));
+export function openSession() : DBSession {
+  let conn = createConnection(cfg);
+  return new DBSession(conn)
 }
 
 /**

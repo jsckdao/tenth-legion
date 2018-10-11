@@ -19,8 +19,7 @@ function resetTimeout() {
     clearTimeout(clientTimeoutHandle);
   }
   clientTimeoutHandle = setTimeout(() => {
-    client.flushall();
-    client.end();
+    client.end(true);
     client = null;
   }, clientOpt.connect_timeout || 5000);
 }

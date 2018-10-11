@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha build/test/*.test.js --timeout 10000",
     "postinstall": "tsc -p . && parcel build www/index.html -d build/public",
-    "start": "tsc -p . && node build/app.js"
+    "start": "tsc -p . && node build/app.js",
+    "reset-db": "node build/reset.js"
   },
   "repository": {},
   "author": "",
@@ -37,6 +38,7 @@
     "@types/mocha": "^5.2.5",
     "@types/mysql": "^2.15.5",
     "@types/node": "^10.9.3",
+    "@types/promisify-supertest": "^1.0.34",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
     "@types/react-router": "^4.0.30",
@@ -51,6 +53,7 @@
     "parcel-bundler": "^1.10.2",
     "postcss": "^7.0.2",
     "postcss-import": "^12.0.0",
+    "promisify-supertest": "^1.0.0",
     "supertest": "^3.3.0",
     "ts-mocha": "^2.0.0",
     "typescript": "^3.0.1"

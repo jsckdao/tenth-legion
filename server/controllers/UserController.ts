@@ -30,9 +30,11 @@ function verifyUsername(username) {
 /**
  * 用户查询
  */
-GET('/users', defaultOption, (context) => {
+GET('/users', defaultOption, async (context) => {
   let pageCond = getPageFromParams(context.params);
-  return context.dbSession.findByPage('user', pageCond);
+  let pageData = await context.dbSession.findByPage('user', pageCond);
+  pageData.data = pageData.data.map(user => omit(user, 'password'));
+  return pageData;
 });
 
 /**
@@ -69,7 +71,7 @@ POST('/user/:id', defaultOption, async (context) => {
   }
   await context.dbSession.update('user', data, { id });
   await submitLog(context, '修改用户信息', omit(data, 'password'));
-  return {};
+  return { };
 });
 
 /**
@@ -99,11 +101,12 @@ POST('/login', { mustLogin: false }, async (context) => {
   if (user.password != hashStr(password)) {
     throw new LogicError('密码错误');
   }
+
   // 设置 token
   let token = hashStr(user.username + '-' + new Date().getTime()).toString();
   let onlineUser = { token, ... omit(user, 'password') };
-
   await context.userCache.set(token, onlineUser);
+
   // await waitLater(1000);
   await submitLogByUser(context, onlineUser, '用户登录');
   return onlineUser;

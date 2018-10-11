@@ -11,9 +11,10 @@
     "types": [
       "node",
       "mocha",
-      "expect"
+      "expect",
     ],
     "lib": [
+      "dom",
       "es2015"
     ],
     "outDir": "build"
