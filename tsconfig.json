@@ -9,7 +9,9 @@
     "sourceMap": true,
     "typeRoots": [ "./node_modules/@types" ],
     "types": [
-      "node"
+      "node",
+      "mocha",
+      "expect"
     ],
     "lib": [
       "es2015"

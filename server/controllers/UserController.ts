@@ -1,11 +1,10 @@
-import { GET, POST, LogicError, DELETE } from '../commons/MVC';
+import { GET, POST, LogicError, DELETE, defaultOption } from '../commons/MVC';
 import { PageCondition } from '../commons/DataBase';
-import { getPageFromParams } from '../commons/Utils';
+import { getPageFromParams, waitLater } from '../commons/Utils';
 import {Md5} from 'ts-md5/dist/md5';
 import { omit } from 'underscore';
 import { User } from '../commons/Models';
-import { submitLog } from './Log';
-import { isContext } from 'vm';
+import { submitLog, submitLogByUser } from './Log';
 
 /**
  * 对密码进行加密
@@ -31,7 +30,7 @@ function verifyUsername(username) {
 /**
  * 用户查询
  */
-GET('/users', (context) => {
+GET('/users', defaultOption, (context) => {
   let pageCond = getPageFromParams(context.params);
   return context.dbSession.findByPage('user', pageCond);
 });
@@ -39,7 +38,7 @@ GET('/users', (context) => {
 /**
  * 新加用户
  */
-POST('/user', async (context) => {
+POST('/user', defaultOption,  async (context) => {
   let { username, password, name } = context.params;
   verifyUsername(username);
   verifyPassword(password);
@@ -62,7 +61,7 @@ POST('/user', async (context) => {
 /**
  * 修改用户信息
  */
-POST('/user/:id', async (context) => {
+POST('/user/:id', defaultOption, async (context) => {
   let { password, id, ... data } = context.params;
   if (password) {
     verifyPassword(password);
@@ -76,7 +75,7 @@ POST('/user/:id', async (context) => {
 /**
  * 注销一个用户
  */
-DELETE('/user/:id', async (context) => {
+DELETE('/user/:id', defaultOption, async (context) => {
   let { id } = context.params;
   let user = await context.dbSession.findOne('user', { id });
   if (!user) {
@@ -90,9 +89,9 @@ DELETE('/user/:id', async (context) => {
 /**
  * 用户登录
  */
-POST('/login', async (context) => {
+POST('/login', { mustLogin: false }, async (context) => {
   let { username, password } = context.params;
-  let user = (await context.dbSession.findOne('user', { username })) as User;
+  let user = (await context.dbSession.findOne('user', { username, disabled: 0 })) as User;
   if (!user) {
     throw new LogicError('用户不存!');
   }
@@ -103,15 +102,17 @@ POST('/login', async (context) => {
   // 设置 token
   let token = hashStr(user.username + '-' + new Date().getTime()).toString();
   let onlineUser = { token, ... omit(user, 'password') };
+
   await context.userCache.set(token, onlineUser);
-  await submitLog(context, '用户登录');
+  // await waitLater(1000);
+  await submitLogByUser(context, onlineUser, '用户登录');
   return onlineUser;
 });
 
 /**
  * 用户登出
  */
-POST('/logout', async (context) => {
+POST('/logout', defaultOption, async (context) => {
   let currentUser = await context.currentUser;
   if (!currentUser) {
     throw new LogicError('未登录');

@@ -1,22 +1,38 @@
 import { createClient, ClientOpts, RedisClient } from 'redis';
 
 export interface CacheOption {
+  timeout?: number;
   host: string;
   port: number;
 }
 
 let clientOpt: ClientOpts = null;
 let client: RedisClient;
+let clientTimeoutHandle = null;
 
 export function configure(options: ClientOpts) {
   clientOpt = options;
 }
 
-export function init() {
+function resetTimeout() {
+  if (clientTimeoutHandle) {
+    clearTimeout(clientTimeoutHandle);
+  }
+  clientTimeoutHandle = setTimeout(() => {
+    client.flushall();
+    client.end();
+    client = null;
+  }, clientOpt.connect_timeout || 5000);
+}
+
+function getClient() {
   if (!client) {
     client = createClient(clientOpt);
     client.on('error', console.error);
   }
+
+  resetTimeout();
+  return client;
 }
 
 export class Cache<T> {
@@ -26,6 +42,7 @@ export class Cache<T> {
   }
 
   get(name: string): Promise<T> {
+    let client = getClient();
     return new Promise<T>((resolve, reject) => {
       client.hget(this.cacheName, name, (err, content) => {
         if (err) {
@@ -47,6 +64,7 @@ export class Cache<T> {
   }
 
   set(name: string, data: T) {
+    let client = getClient();
     return new Promise<void>((resolve, reject) => {
       client.hset(this.cacheName, name, JSON.stringify(data), (err) => {
         if (err) {
@@ -60,6 +78,7 @@ export class Cache<T> {
   }
 
   remove(... name: string[]) {
+    let client = getClient();
     return new Promise<void>((resolve, reject) => {
       client.hdel(this.cacheName, name, (err) => {
         if (err) {
