@@ -34,18 +34,22 @@ const Window = ({ children }) => {
 // function putUser (){
 //     let xmlhttp=new XMLHttpRequest();
 //     let url = "/api/user";
-// url = addURLParam(url, "name", "Nicholas");
-// url = addURLParam(url, "book", "Professional JavaScript");
+//     xmlhttp.append(url, "name", "Nicholas");
+//     xmlhttp = addURLParam(url, "book", "Professional JavaScript");
 //     xmlhttp.open('POST','/api/user')
 // }
 
-function login (){
-  let xmlhttp=new XMLHttpRequest();
-  let url = "/api/user";
-  url = addURLParam(url, "username", "cake110");
-  url = addURLParam(url, "password", "a123123");
-  xmlhttp.open('POST','/api/login')
-}
+// function login (){
+//   let data=new FormData();
+//   data.append("username", "cake110");
+//   data.append("password", "a123123");
+//   let xmlhttp = createXHR();
+//   // url = addURLParam(url, "username", "cake110");
+//   // url = addURLParam(url, "password", "a123123");
+//   xmlhttp.open('POST','/api/login')
+// }
+
+
 
 function Index() {
   return <div></div>
