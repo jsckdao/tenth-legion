@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import '../resources/css/style.less';
-
-import { createElement as _c } from 'react';
+import { Component, createElement as _c } from 'react';
 import { render, createPortal } from 'react-dom';
 import { BrowserRouter, Route, Link, Router } from 'react-router-dom'
 
@@ -39,71 +38,91 @@ const Window = ({ children }) => {
 //     xmlhttp.open('POST','/api/user')
 // }
 
-// function login (){
-//   let data=new FormData();
-//   data.append("username", "cake110");
-//   data.append("password", "a123123");
-//   let xmlhttp = createXHR();
-//   // url = addURLParam(url, "username", "cake110");
-//   // url = addURLParam(url, "password", "a123123");
-//   xmlhttp.open('POST','/api/login')
+function login() {
+  let xmlhttp = new XMLHttpRequest();
+  xmlhttp.open('POST', '/api/login');
+  xmlhttp.setRequestHeader('Content-Type', 'application/json');
+  xmlhttp.send(JSON.stringify({ username: 'admin', password: 'a123123' }));
+}
+
+// function putUser() {
+//   let xmlhttp = new XMLHttpRequest();
+//   let username = document.getElementById('username').value;
+//   console.log('username', username);
+// xmlhttp.open('POST','/api/user');
+// xmlhttp.setRequestHeader('Content-Type', 'application/json');
+// xmlhttp.send(JSON.stringify({  username: ,  password: 'a123123' }));
 // }
-
-
 
 function Index() {
   return <div></div>
 }
 
-function PersonsTable() {
-  return <div className="PersonsTable">
+export default class PersonsTable extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inpValu: '',
+      value: ''
+    }
+  }
 
-    <table className="table">
-      <thead>
-        <tr>
-          <td>姓名</td>
-          <td>用户名</td>
-          <td>邮箱</td>
-          <td>skype</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>张飞</td>
-          <td>zhangfei</td>
-          <td>zhangfei@urui.biz</td>
-          <td>zhangfei</td>
-        </tr>
-      </tbody>
-    </table>
+  handleChange(e) {
+    this.setState({
+      inpValu: e.target.value
+    })
+  }
+
+  render() {
+    let value = '';
+    return <div className="PersonsTable">
+      <table className="table">
+        <thead>
+          <tr>
+            <td>姓名</td>
+            <td>用户名</td>
+            <td>邮箱</td>
+            <td>skype</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>张飞</td>
+            <td>zhangfei</td>
+            <td>zhangfei@urui.biz</td>
+            <td>zhangfei</td>
+          </tr>
+        </tbody>
+      </table>
 
 
-    <div className='fl'>
-      <button>添加</button>
-      <input placeholder='username' id='username'></input>
-      <input placeholder='password' id='password'></input>
+      <div className='fl'>
+        <button //onClick={() => { putUser() }}
+        >添加</button>
+        <input placeholder='username' id='username' value={value} onChange={this.handleChange.bind(this)} defaultValue=''></input>
+        <input placeholder='password' id='password' onChange={this.handleChange.bind(this)} defaultValue=''></input>
+        <button onClick={() => { login() }}>登录</button>
+      </div>
+      <div className="fr">
+        <ul className="pagination">
+          <li className="page-item"><a className="page-link" href="#">&lt;</a></li>
+          <li className="page-item"><a className="page-link" href="#">1</a></li>
+          <li className="page-item"><a className="page-link" href="#">2</a></li>
+          <li className="page-item"><a className="page-link" href="#">3</a></li>
+          <li className="page-item"><a className="page-link" href="#">&gt;</a></li>
+        </ul>
+      </div>
     </div>
-    <div className="fr">
-      <ul className="pagination">
-        <li className="page-item"><a className="page-link" href="#">&lt;</a></li>
-        <li className="page-item"><a className="page-link" href="#">1</a></li>
-        <li className="page-item"><a className="page-link" href="#">2</a></li>
-        <li className="page-item"><a className="page-link" href="#">3</a></li>
-        <li className="page-item"><a className="page-link" href="#">&gt;</a></li>
-      </ul>
-    </div>
-  </div>
-}
 
-const TasksTable = () => {
-  return <div className="PersonsTable">
-    <div className='list'>
-      <a>未关闭</a>
-      <a>已关闭</a>
-      <a>所有</a>
-    </div>
-    <div className='option'>
-      {/* <div className="btn-group">
+    function TasksTable() {
+      return <div className="PersonsTable">
+        <div className='list'>
+          <a>未关闭</a>
+          <a>已关闭</a>
+          <a>所有</a>
+        </div>
+        <div className='option'>
+          {/* <div className="btn-group">
         <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Action <span className="caret"></span>
         </button>
@@ -115,16 +134,16 @@ const TasksTable = () => {
           <li><a href="#">Separated link</a></li>
         </ul>
       </div> */}
-      <input placeholder='标题'></input>
-      <select className='dropdown' name='project'><option value='default'>项目</option></select>
-      <select className='dropdown' name='assignedBy'><option value='default'>指派人</option></select>
-      <select className='dropdown' name='operator'><option value='default'>执行人</option></select>
-      <input placeholder='任务时间'></input>
+          <input placeholder='标题'></input>
+          <select className='dropdown' name='project'><option value='default'>项目</option></select>
+          <select className='dropdown' name='assignedBy'><option value='default'>指派人</option></select>
+          <select className='dropdown' name='operator'><option value='default'>执行人</option></select>
+          <input placeholder='任务时间'></input>
 
-    </div>
+        </div>
 
 
-    {/* <table className="table">
+        {/* <table className="table">
       <thead>
         <tr>
           <td>优先级</td>
@@ -144,24 +163,69 @@ const TasksTable = () => {
       </tbody>
     </table> */}
 
-    <div className="fr">
-      <ul className="pagination">
-        <li className="page-item"><a className="page-link" href="#">&lt;</a></li>
-        <li className="page-item"><a className="page-link" href="#">1</a></li>
-        <li className="page-item"><a className="page-link" href="#">2</a></li>
-        <li className="page-item"><a className="page-link" href="#">3</a></li>
-        <li className="page-item"><a className="page-link" href="#">&gt;</a></li>
-      </ul>
-    </div>
+        <div className="fr">
+          <ul className="pagination">
+            <li className="page-item"><a className="page-link" href="#">&lt;</a></li>
+            <li className="page-item"><a className="page-link" href="#">1</a></li>
+            <li className="page-item"><a className="page-link" href="#">2</a></li>
+            <li className="page-item"><a className="page-link" href="#">3</a></li>
+            <li className="page-item"><a className="page-link" href="#">&gt;</a></li>
+          </ul>
+        </div>
 
-  </div>
+      </div>
+
+    }
+
+  };
+
+
+  // function PersonssssTable() {
+  //   return <div className="PersonsTable">
+
+  //     <table className="table">
+  //       <thead>
+  //         <tr>
+  //           <td>姓名</td>
+  //           <td>用户名</td>
+  //           <td>邮箱</td>
+  //           <td>skype</td>
+  //         </tr>
+  //       </thead>
+  //       <tbody>
+  //         <tr>
+  //           <td>张飞</td>
+  //           <td>zhangfei</td>
+  //           <td>zhangfei@urui.biz</td>
+  //           <td>zhangfei</td>
+  //         </tr>
+  //       </tbody>
+  //     </table>
+
+
+  //     <div className='fl'>
+  //       <button onClick={() => { putUser() }}>添加</button>
+  //       <input placeholder='username' id='username' value='user'></input>
+  //       <input placeholder='password' id='password' value='pass'></input>
+  //       <button onClick={() => { login() }}>登录</button>
+  //     </div>
+  //     <div className="fr">
+  //       <ul className="pagination">
+  //         <li className="page-item"><a className="page-link" href="#">&lt;</a></li>
+  //         <li className="page-item"><a className="page-link" href="#">1</a></li>
+  //         <li className="page-item"><a className="page-link" href="#">2</a></li>
+  //         <li className="page-item"><a className="page-link" href="#">3</a></li>
+  //         <li className="page-item"><a className="page-link" href="#">&gt;</a></li>
+  //       </ul>
+  //     </div>
+  //   </div>
+  // }
 
 }
 
 
 let active = 'overview';
 function Main() {
-
   console.log('active', active);
   return <div className='contain'>
     <nav>
@@ -174,7 +238,7 @@ function Main() {
     <div className='main'>
       {/* <Route path="/" component={Index} /> */}
       <Route path="/persons" component={PersonsTable} />
-      <Route path="/tasks" component={TasksTable} />
+      {/* <Route path="/tasks" component={TasksTable} /> */}
     </div>
   </div>
 
@@ -197,6 +261,7 @@ function Main() {
   //   </div>
   // </div>;
 }
+
 
 render(<BrowserRouter><Main /></BrowserRouter>, document.getElementById("root"));
 
