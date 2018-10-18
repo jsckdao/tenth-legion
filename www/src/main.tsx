@@ -58,23 +58,49 @@ function Index() {
   return <div></div>
 }
 
-export default class PersonsTable extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inpValu: '',
-      value: ''
-    }
+interface PersonsTableProps {
+
+}
+
+interface PersonsTableState {
+  name: string;
+  username: string;
+  password: string;
+  email: string;
+  skype: string;
+  value:string;
+}
+
+export default class PersonsTable extends Component<PersonsTableProps, PersonsTableState> {
+
+  state = {
+    name: '',
+    username: '',
+    password: '',
+    email: '',
+    skype: '',
+    value:''
+  };
+
+  putUser(event) {
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', '/api/user');
+    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+    xmlhttp.send(JSON.stringify({ username: event.defaultValue, password: 'a123123' }));
   }
 
-  handleChange(e) {
+  handleChange(event) {
     this.setState({
-      inpValu: e.target.value
+      name:event.target.name,
+      value: event.target.value
     })
   }
 
+  // const e = (<input placeholder='username' id='username' onChange={this.handleChange.bind(this)} defaultValue=''></input>)
+
   render() {
-    let value = '';
+    var value = this.state.value;
+    var username = this.state.username;
     return <div className="PersonsTable">
       <table className="table">
         <thead>
@@ -95,13 +121,15 @@ export default class PersonsTable extends Component {
         </tbody>
       </table>
 
-
       <div className='fl'>
-        <button //onClick={() => { putUser() }}
+        <button onClick={() => { console.log(this.state.username) }}
         >添加</button>
-        <input placeholder='username' id='username' value={value} onChange={this.handleChange.bind(this)} defaultValue=''></input>
-        <input placeholder='password' id='password' onChange={this.handleChange.bind(this)} defaultValue=''></input>
-        <button onClick={() => { login() }}>登录</button>
+        <input placeholder='name' id='name' onChange={this.handleChange.bind(this)} value=''></input>
+        <input placeholder='username' id='username' onChange={this.handleChange.bind(this)} value={username}></input>
+        <input placeholder='password' id='password' onChange={this.handleChange.bind(this)} value={value}></input>
+        <input placeholder='email' id='email' onChange={this.handleChange.bind(this)} value={value}></input>
+        <input placeholder='skype' id='skype' onChange={this.handleChange.bind(this)} value={value}></input>
+        <button onClick={() => { login(), console.log('login') }}>登录</button>
       </div>
       <div className="fr">
         <ul className="pagination">
