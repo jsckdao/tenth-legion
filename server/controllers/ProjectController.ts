@@ -14,7 +14,18 @@ function getProjectFormData(params: any) {
  */
 GET('/projects', defaultOption, (context) => {
   let pageCond = getPageFromParams(context.params);
-  return context.dbSession.findByPage('project', pageCond);
+  return context.dbSession.findByPage('project_view', pageCond);
+});
+
+/**
+ * 查询单个项目信息
+ */
+GET('/project/:id', defaultOption, async (context) => {
+  let project = await context.dbSession.findOne('project_view', { id: context.params.id });
+  if (!project) {
+    throw new LogicError('不存的项目');
+  }
+  return project;
 });
 
 /**
@@ -25,7 +36,7 @@ POST('/project', defaultOption, async (context) => {
   await context.dbSession.insert('project', project);
   let res = await submitLog(context, '新建项目', project);
   project.id = res['insertId'];
-  return {};
+  return project;
 });
 
 /**

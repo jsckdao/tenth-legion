@@ -27,6 +27,31 @@ create table `project`  (
   `description` text
 ) ENGINE=InnoDB;
 
+drop view if exists `project_view`;
+create view `project_view`
+as select
+  p.id as `id`,
+  p.name as `name`,
+  p.develop_user_id as `develop_user_id`,
+  u1.name as `develop_user_name`,
+  p.test_user_id as `test_user_id`,
+  u2.name as `test_user_name`,
+  p.status as `status`,
+  p.start_time as `start_time`,
+  p.end_time as `end_time`,
+  p.repository_url as `repository_url`,
+  p.dev_url as `dev_url`,
+  p.pre_url as `pre_url`,
+  p.online_url as `online_url`,
+  p.description as `description`
+from `project` as p
+left join
+  `user` as u1
+on p.develop_user_id = u1.id
+left join
+  `user` as u2
+on p.test_user_id = u2.id;
+
 drop table if exists `task`;
 create table `task` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,9 +99,7 @@ create table `log` (
 
 insert into `user` (`username`,`password`,`name`) value ('admin', '2a5af3af891c42b336f76e95cde41d37', '管理员');
 
--- drop view if exists `project`;
--- create view `project`
--- as select
+
 
 
 

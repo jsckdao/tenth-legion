@@ -38,6 +38,17 @@ GET('/users', defaultOption, async (context) => {
 });
 
 /**
+ * 根据 id 加载单个用户
+ */
+GET('/user/:id', defaultOption, async ({ dbSession, params }) => {
+  let user = await dbSession.findOne('user', { id: params.id, disabled: 0 });
+  if (!user) {
+    throw new LogicError('没有找到用户');
+  }
+  return omit(user, 'password');
+});
+
+/**
  * 新加用户
  */
 POST('/user', defaultOption,  async (context) => {
