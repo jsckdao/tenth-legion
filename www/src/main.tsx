@@ -3,6 +3,7 @@ import '../resources/css/style.less';
 import { Component, createElement as _c } from 'react';
 import { render, createPortal } from 'react-dom';
 import { BrowserRouter, Route, Link, Router } from 'react-router-dom'
+import { string } from 'prop-types';
 
 
 
@@ -30,51 +31,71 @@ const Window = ({ children }) => {
   return createPortal(window, document.getElementById('root'));
 }
 
-// function putUser (){
-//     let xmlhttp=new XMLHttpRequest();
-//     let url = "/api/user";
-//     xmlhttp.append(url, "name", "Nicholas");
-//     xmlhttp = addURLParam(url, "book", "Professional JavaScript");
-//     xmlhttp.open('POST','/api/user')
-// }
+
+function Index() {
+  return <div></div>
+}
+
+interface PersonsTableProps {
+
+}
+
+interface PersonsTableState {
+  name: string;
+  username: string;
+  password: string;
+  email: string;
+  skype: string;
+  value: string;
+  token:string;
+}
 
 function login() {
   let xmlhttp = new XMLHttpRequest();
   xmlhttp.open('POST', '/api/login');
   xmlhttp.setRequestHeader('Content-Type', 'application/json');
   xmlhttp.send(JSON.stringify({ username: 'admin', password: 'a123123' }));
-}
-
-// function putUser() {
-//   let xmlhttp = new XMLHttpRequest();
-//   let username = document.getElementById('username').value;
-//   console.log('username', username);
-// xmlhttp.open('POST','/api/user');
-// xmlhttp.setRequestHeader('Content-Type', 'application/json');
-// xmlhttp.send(JSON.stringify({  username: ,  password: 'a123123' }));
-// }
-
-function Index() {
-  return <div></div>
-}
-
-export default class PersonsTable extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inpValu: '',
-      value: ''
+  xmlhttp.onreadystatechange=function(){
+    if (xmlhttp.readyState==4 && xmlhttp.status==200){
+      console.log(JSON.parse(xmlhttp.responseText).token);
+      sessionStorage['token']=JSON.parse(xmlhttp.responseText).token;
     }
   }
+}
 
-  handleChange(e) {
-    this.setState({
-      inpValu: e.target.value
-    })
+export default class PersonsTable extends Component<PersonsTableProps, PersonsTableState> {
+
+  state = {
+    name: '',
+    username: '',
+    password: '',
+    email: '',
+    skype: '',
+    value: '',
+    token:''
+  };
+
+  
+
+  putUser() {
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', '/api/user');
+    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+    xmlhttp.send(JSON.stringify({ 
+      token: sessionStorage['token'],
+      username: this.state.username,
+      name:this.state.name, 
+      password: this.state.password,
+      email:this.state.email,
+      skype:this.state.skype 
+    }));
+    // xmlhttp.onreadystatechange
+    console.log('send');
   }
 
+  // const e = (<input placeholder='username' id='username' onChange={this.handleChange.bind(this)} defaultValue=''></input>)
+
   render() {
-    let value = '';
     return <div className="PersonsTable">
       <table className="table">
         <thead>
@@ -95,13 +116,22 @@ export default class PersonsTable extends Component {
         </tbody>
       </table>
 
-
       <div className='fl'>
-        <button //onClick={() => { putUser() }}
-        >添加</button>
-        <input placeholder='username' id='username' value={value} onChange={this.handleChange.bind(this)} defaultValue=''></input>
-        <input placeholder='password' id='password' onChange={this.handleChange.bind(this)} defaultValue=''></input>
-        <button onClick={() => { login() }}>登录</button>
+        <input placeholder='name' onChange={(evt) => this.setState({ name: evt.target.value })} value={this.state.name}></input>
+        <input placeholder='username' onChange={(evt) => this.setState({ username: evt.target.value })} value={this.state.username}></input>
+        <input placeholder='password' onChange={(evt) => this.setState({ password: evt.target.value })} value={this.state.password}></input>
+        <input placeholder='email' onChange={(evt) => this.setState({ email: evt.target.value })} value={this.state.email}></input>
+        <input placeholder='skype' onChange={(evt) => this.setState({ skype: evt.target.value })} value={this.state.skype}></input>
+        <button onClick={() => {
+          console.log('name', this.state.name),
+          console.log('username', this.state.username),
+          console.log('password', this.state.password),
+          console.log('email', this.state.email),
+          console.log('skype', this.state.skype),
+          this.putUser();
+        }}>添加</button>
+        <br/>
+        <button onClick={() => { login(), console.log('login') }}>登录</button>
       </div>
       <div className="fr">
         <ul className="pagination">

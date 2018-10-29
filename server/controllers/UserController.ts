@@ -52,7 +52,7 @@ GET('/user/:id', defaultOption, async ({ dbSession, params }) => {
  * 新加用户
  */
 POST('/user', defaultOption,  async (context) => {
-  let { username, password, name } = context.params;
+  let { username, password, name, skype, email } = context.params;
   verifyUsername(username);
   verifyPassword(password);
 
@@ -63,7 +63,9 @@ POST('/user', defaultOption,  async (context) => {
   let data = {
     username,
     name,
-    password: hashStr(password)
+    password: hashStr(password),
+    skype,
+    email
   };
   let res = await context.dbSession.insert('user', data);
   await submitLog(context, '添加新用户', omit(data, 'password'));
